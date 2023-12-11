@@ -5,19 +5,17 @@ import {
   createBottomTabNavigator,
 } from '@react-navigation/bottom-tabs';
 import Home from '@Components/Home/Home';
-import Users from '@Components/User/User';
 import AppImages from '@Theme/AppImages';
 import { AppContext } from '@AppContext';
 import ThemeColor from '@Theme/Colors';
 import { AssetImage } from '@CommonComponent';
+import { UserScreen } from '@Components/User/UserScreen';
 
 const Tab = createBottomTabNavigator();
 
 enum tabs {
   HomeTab = 'Home',
-  SearchTab = 'Search',
   UsersTab = 'Users',
-  SettingsTab = 'Settings',
 }
 
 const TABS = [
@@ -30,7 +28,7 @@ const TABS = [
   {
     title: tabs.UsersTab,
     icon: AppImages.user,
-    screen: Users,
+    screen: UserScreen,
     name: 'user',
   },
 ];

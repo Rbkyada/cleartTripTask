@@ -1,62 +1,91 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
+import { FlatList, StyleSheet, View } from 'react-native';
 import {
   CustomText,
   Layout,
   BottomModalContainer,
-  IsAlertModal,
+  CustomTextInput,
 } from '@CommonComponent';
 import { ButtonComponent } from '@SubComponents';
-import { compareAppVersions, getVersionName, openLink } from '@Utils/Helper';
-import { useIsFocused } from '@react-navigation/native';
-import { alertData, isIOS, width } from '@Utils/Constant';
 import { AppContext } from '@AppContext';
+import { height, width } from '@Utils/Constant';
+import { useAppDispatch, useAppSelector } from '@Stores';
+import { addOrRemoveNotes } from '@Actions/UserActions';
+import { NotesList } from '@Utils/Interface';
+
+const styles = StyleSheet.create({
+  btnContainer: {
+    flexDirection: 'row',
+    paddingVertical: 10,
+    justifyContent: 'space-between',
+  },
+  btnStyle: {
+    width: width * 0.46,
+    height: 50,
+  },
+  separator: {
+    height: 10,
+  },
+  cardStyle: {
+    padding: 10,
+    borderRadius: 10,
+  },
+});
 
 const Home = () => {
-  const { appTheme } = useContext(AppContext);
+  const { appTheme, translations } = useContext(AppContext);
+
+  const dispatch = useAppDispatch();
+
+  const useDefault = useAppSelector(state => state.user);
+  const { notesList } = useDefault;
+
   const [isShowModal, setShowModal] = useState(false);
-  const [isUpdate, setIsUpdate] = useState(false);
-  let version = getVersionName();
-  const alertDetails = alertData.updateVersion;
-  const isFocused = useIsFocused();
 
-  useEffect(() => {
-    if (isFocused) {
-      checkMinimumVersion();
-    }
-  }, [isFocused]);
+  const { btnContainer, btnStyle, separator, cardStyle } = styles;
 
-  const checkMinimumVersion = async () => {
-    try {
-      let shouldUpdate = compareAppVersions({
-        version,
-        minimumVersion: 'v1.0.0', // Wrap whole try block in if condition with apiConfig.serviceConfig and pass minimumVersion from api response
-      });
-      if (shouldUpdate) {
-        setIsUpdate(true);
-        return;
-      }
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+
+  const onNoteSave = () => {
+    if (title === '' || description === '') {
       return;
-    } catch (e: any) {
-      console.log(e);
     }
+    const payload = {
+      title,
+      description,
+    };
+    dispatch(
+      addOrRemoveNotes({
+        ...useDefault,
+        notesList: [...useDefault.notesList, payload],
+      }),
+    );
   };
 
-  const updateApp = async () => {
-    try {
-      if (isIOS) {
-        await openLink('');
-      } else {
-        await openLink('');
-      }
-    } catch (e: any) {
-      console.log(e);
-    }
+  const renderItem = ({ item }: { item: NotesList }) => {
+    return (
+      <View style={[cardStyle, { backgroundColor: appTheme.border }]}>
+        <CustomText xlarge>{item.title}</CustomText>
+        <CustomText numberOfLines={1}>{item.description}</CustomText>
+      </View>
+    );
+  };
+
+  const itemSeparator = () => {
+    return <View style={separator} />;
   };
 
   return (
-    <Layout title="Widgets" padding={20}>
-      <CustomText large>Home screen</CustomText>
+    <Layout title={translations.NOTES} padding={10}>
+      <View>
+        <FlatList
+          data={notesList}
+          ItemSeparatorComponent={itemSeparator}
+          renderItem={renderItem}
+          keyExtractor={(item, index) => index.toString()}
+        />
+      </View>
       <ButtonComponent
         onPress={() => {
           setShowModal(true);
@@ -66,29 +95,45 @@ const Home = () => {
         borderRadius={10}
       />
       <BottomModalContainer
-        title="Modal"
+        title={translations.ADD_NOTE}
         onClose={() => setShowModal(false)}
         show={isShowModal}>
-        <CustomText large>Modal</CustomText>
+        <CustomTextInput
+          placeholder={translations.TITLE_PLACEHOLDER}
+          value={title}
+          onTextChange={text => setTitle(text)}
+          label={translations.TITLE}
+        />
+        <CustomTextInput
+          placeholder={translations.DESCRIPTION_PLACEHOLDER}
+          value={description}
+          onTextChange={text => setDescription(text)}
+          label={translations.DESCRIPTION}
+          multiline={true}
+        />
+        <View style={btnContainer}>
+          <ButtonComponent
+            title={translations.CANCEL}
+            backColor={appTheme.themeColor}
+            style={btnStyle}
+            borderRadius={10}
+            onPress={() => {
+              setShowModal(false);
+            }}
+          />
+          <ButtonComponent
+            title={translations.SAVE}
+            backColor={appTheme.themeColor}
+            borderRadius={10}
+            style={btnStyle}
+            onPress={() => {
+              setShowModal(false);
+              onNoteSave();
+            }}
+          />
+        </View>
+        <View style={{ height: height * 0.4 }} />
       </BottomModalContainer>
-      <IsAlertModal
-        visible={isUpdate}
-        data={alertDetails}
-        onClose={() => null}
-        rightBtn={{
-          title: 'Update',
-          onPress: updateApp,
-          style: {
-            borderColor: appTheme.themeColor,
-            backgroundColor: appTheme.themeColor,
-            borderRadius: 0,
-            marginVertical: 0,
-            width: width * 0.8,
-            marginHorizontal: width * 0.05,
-          },
-          textColor: appTheme.tint,
-        }}
-      />
     </Layout>
   );
 };
