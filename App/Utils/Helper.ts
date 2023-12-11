@@ -153,3 +153,15 @@ export const openLink = async (url: string, checkUrl = true) => {
     console.log(e);
   }
 };
+
+export const generateUniqueId = () => {
+  const randomNumber = Math.floor(Math.random() * 100000000);
+
+  // Get the current timestamp
+  const timestamp = new Date().getTime();
+
+  // Combine the timestamp and random number to create a unique ID
+  const uniqueId = `${timestamp}${randomNumber}`;
+
+  return +uniqueId;
+};

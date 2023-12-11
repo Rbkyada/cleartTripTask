@@ -19,6 +19,7 @@ const DarkTheme = {
   textBorder: ThemeColor.lightGray4,
   gray: ThemeColor.gray,
   overlay: ThemeColor.overlay,
+  cardBg: ThemeColor.light,
 };
 
 export default DarkTheme;

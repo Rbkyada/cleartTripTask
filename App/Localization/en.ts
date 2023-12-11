@@ -13,6 +13,9 @@ const en = {
   NOTES: 'Notes',
   TITLE_PLACEHOLDER: 'Enter Note Title',
   DESCRIPTION_PLACEHOLDER: 'Enter Note Description',
+  WELCOME: 'Welcome to Notes App',
+  LOGOUT_MESSAGE: 'Are you sure you want to log out?',
+  EMPTY_NOTES: 'No notes found',
 };
 
 export { en };

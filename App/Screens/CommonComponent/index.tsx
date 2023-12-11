@@ -9,3 +9,4 @@ export * from '@CommonComponent/NavigationBar';
 export * from '@CommonComponent/NetworkImage';
 export * from '@CommonComponent/TouchableText';
 export * from '@CommonComponent/IsAlertModal';
+export * from '@CommonComponent/NotesCard';

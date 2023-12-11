@@ -1,20 +1,35 @@
 import React, { useContext } from 'react';
-import { Alert } from 'react-native';
+import { Alert, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { CustomText, Layout, NetworkImage } from '@CommonComponent';
 import { SettingRow } from '@SubComponents';
 import { AppContext } from '@AppContext';
 import { onLogout } from '@Utils/Helper';
 
+const styles = StyleSheet.create({
+  imgStyle: {
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    alignSelf: 'center',
+  },
+  title: {
+    paddingVertical: 30,
+    alignSelf: 'center',
+  },
+});
+
 const UserScreen = () => {
   const navigation = useNavigation();
 
   const { appTheme, translations } = useContext(AppContext);
 
+  const { imgStyle, title } = styles;
+
   const logout = () => {
     Alert.alert(
       '',
-      'Do you want to logout?',
+      `${translations.LOGOUT_MESSAGE}`,
       [
         {
           text: 'No',
@@ -32,8 +47,14 @@ const UserScreen = () => {
 
   return (
     <Layout>
-      <NetworkImage source="https://iili.io/H1D3eDX.jpg" />
-      <CustomText>UserScreen</CustomText>
+      <NetworkImage
+        resizeMode="cover"
+        source="https://iili.io/H1D3eDX.jpg"
+        imageStyle={imgStyle}
+      />
+      <CustomText xxlarge style={title}>
+        {translations.WELCOME}
+      </CustomText>
 
       <SettingRow
         title={translations.LOG_OUT}
